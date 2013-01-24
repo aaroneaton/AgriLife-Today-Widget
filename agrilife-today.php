@@ -3,7 +3,7 @@
  * Plugin Name: AgriLife Today Widget
  * Plugin URI: https://github.com/channeleaton/AgriLife-Today-Widget
  * Description: Creates a widget to display stories from today.agrilife.org. Code is pulled from the AgriFlex theme.
- * Version: 1.0
+ * Version: 1.1
  * Author: J. Aaron Eaton
  * Author URI: http://channeleaton.com
  */
@@ -13,33 +13,35 @@
  * Three widgets in one with thoughtful defaults in case of absentee user.
  */
 
-class Agrilife_Today_Widget_RSS extends WP_Widget {
+class Agrilife_Today_Widget extends WP_Widget {
 	private $feeds = array(
-						array('All AgriLife Today','http://today.agrilife.org/feed/'),
-						array('College','http://today.agrilife.org/agency/college-of-agriculture-and-life-sciences/feed/'),
-						array('Extension','http://today.agrilife.org/agency/texas-agrilife-extension-service/feed/'),
-						array('Research','http://today.agrilife.org/agency/texas-agrilife-research/feed/'),
-						array('TVMDL','http://today.agrilife.org/agency/texas-veterinary-medical-diagnostics-laboratory/feed/'),
-						array('Category: Business &amp; Finance','http://today.agrilife.org/category/business/feed/'),
-						array('Category: Environment','http://today.agrilife.org/category/environment/feed/'),
-						array('Category: Farm &amp; Ranch','http://today.agrilife.org/category/farm-ranch/feed/'),
-						array('Category: Lawn &amp; Garden','http://today.agrilife.org/category/lawn-garden/feed/'),
-						array('Category: Life &amp; Health','http://today.agrilife.org/category/life-health/feed/'),
-						array('Category: Science &amp; Tech','http://today.agrilife.org/category/science-and-technology/feed/'),
-						array('Sub-Cat: 4-H','http://today.agrilife.org/tag/4h-youth/feed/'),
-						array('Sub-Cat: AgriLife Personnel','http://today.agrilife.org/tag/personnel/feed/'),
-						array('Sub-Cat: Gardening','http://today.agrilife.org/tag/gardening-landscaping/feed/'),
-						array('Sub-Cat: Energy','http://today.agrilife.org/tag/biofuel-energy/feed/'),
-
-					);
+    array('All AgriLife Today','http://today.agrilife.org/feed/'),
+    array('College','http://today.agrilife.org/agency/college-of-agriculture-and-life-sciences/feed/'),
+    array('Extension','http://today.agrilife.org/agency/texas-agrilife-extension-service/feed/'),
+    array('Research','http://today.agrilife.org/agency/texas-agrilife-research/feed/'),
+    array('TVMDL','http://today.agrilife.org/agency/texas-veterinary-medical-diagnostics-laboratory/feed/'),
+    array('Category: Business &amp; Finance','http://today.agrilife.org/category/business/feed/'),
+    array('Category: Environment','http://today.agrilife.org/category/environment/feed/'),
+    array('Category: Farm &amp; Ranch','http://today.agrilife.org/category/farm-ranch/feed/'),
+    array('Category: Lawn &amp; Garden','http://today.agrilife.org/category/lawn-garden/feed/'),
+    array('Category: Life &amp; Health','http://today.agrilife.org/category/life-health/feed/'),
+    array('Category: Science &amp; Tech','http://today.agrilife.org/category/science-and-technology/feed/'),
+    array('Sub-Cat: 4-H','http://today.agrilife.org/tag/4h-youth/feed/'),
+    array('Sub-Cat: AgriLife Personnel','http://today.agrilife.org/tag/personnel/feed/'),
+    array('Sub-Cat: Gardening','http://today.agrilife.org/tag/gardening-landscaping/feed/'),
+    array('Sub-Cat: Energy','http://today.agrilife.org/tag/biofuel-energy/feed/'),
+  );
 
 	function __construct() {
+
 		//Constructor
 		$widget_ops = array('classname' => 'widget agrilifetoday', 'description' => 'Show the latest AgriLife Today updates.' );
 		$this->WP_Widget('Agrilife_Today_Widget_RSS', 'AgriLife: Agrilife Today News Feed', $widget_ops);		
-	}
+
+	} // __construct
 
 	function widget($args, $instance) {
+
 		// prints the widget
 		if ( isset($instance['error']) && $instance['error'] )
 			return;
@@ -74,9 +76,11 @@ class Agrilife_Today_Widget_RSS extends WP_Widget {
 			<?php agrilife_widget_agrilifetoday_rss_output( $rss, $instance ); ?>		
 		</div>
 		<?php echo $after_widget;
-	}
+
+	} // widget
 
 	function update($new_instance, $old_instance) {
+
 		//save the widget
 		$instance = $old_instance;
 		$instance['feed_link_index'] = strip_tags($new_instance['feed_link_index']);
@@ -84,9 +88,11 @@ class Agrilife_Today_Widget_RSS extends WP_Widget {
 		$instance['items'] = strip_tags($new_instance['items']);
 		$instance['title'] = strip_tags($new_instance['title']);
 		return $instance;
-	}
+
+	} // update
 
 	function form($instance) {
+
 		//widgetform in backend
 		$instance 			= wp_parse_args( (array) $instance, array('items' => '5', 'feed_link_index' => '0', 'show_summary' => true) );
 		
@@ -121,13 +127,10 @@ class Agrilife_Today_Widget_RSS extends WP_Widget {
 			<label for="<?php echo $this->get_field_id('show_summary'); ?>"><?php _e('Display article excerpts?'); ?></label>
 		</p>
 		<?php
-	}
 
-}
+	} // form
 
-
-
-
+} // class AgriLife_Today_Widget
 
 /**
  * Display the RSS feed from AgriLife Today and include image
@@ -224,9 +227,21 @@ function agrilife_widget_agrilifetoday_rss_output( $rss, $args = array() ) {
 	echo '</ul>';
 	$rss->__destruct();
 	unset($rss);
-}
 
-add_action( 'widgets_init', 'init_ag_today' );
-function init_ag_today() {
-  register_widget( 'Agrilife_Today_Widget_RSS');
-}
+} // agrilife_widget_agrilifetoday_rss_output
+
+function init_ag_today_widget() {
+
+  register_widget( 'Agrilife_Today_Widget');
+
+} // init_ag_today_widget
+add_action( 'widgets_init', 'init_ag_today_widget' );
+
+// Load up the default css
+function agrilife_today_load_styles() {
+
+  wp_register_style( 'today-style', plugins_url( 'style.css', __FILE__ ) );
+  wp_enqueue_style( 'today-style' );
+
+} // agrilife_today_load_styles
+add_action( 'wp_enqueue_scripts', 'agrilife_today_load_styles' );
