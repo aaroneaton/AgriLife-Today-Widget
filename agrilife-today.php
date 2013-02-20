@@ -203,8 +203,12 @@ function agrilife_widget_agrilifetoday_rss_output( $rss, $args = array() ) {
 		$image = '<img class="rssthumb" src="'.get_bloginfo('stylesheet_directory') . '/images/agrilifetodaythumb.jpg?v=100'.'" alt="'.$title.'" />';
 
 		$date = $item->get_date( 'U' );
+
+		// Allow developers to choose the date format
+		$format = apply_filters( 'agrilife_today_date_format', 'M d' );
+
 		if ( $date ) {
-			$date = ' <span class="rss-date">' . date_i18n( 'M d', $date ) . '</span>';
+			$date = ' <span class="rss-date">' . date_i18n( $format, $date ) . '</span>';
 		}
 
 		// SimplePie Bug:
